@@ -1,0 +1,19 @@
+{
+  "name": "clojure-skills",
+  "owner": {
+    "name": "eighttrigrams"
+  },
+  "metadata": {
+    "description": "Clojure skills for Claude Code",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "writing-clojure",
+      "source": "./plugins/writing-clojure",
+      "description": "Skills for writing Clojure code with REPL and nREPL support",
+      "version": "1.0.0"
+    }
+  ]
+}
