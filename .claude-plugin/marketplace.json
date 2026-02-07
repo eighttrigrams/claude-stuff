@@ -14,6 +14,12 @@
       "source": "./plugins/writing-clojure",
       "description": "Skills for writing Clojure code with REPL and nREPL support",
       "version": "1.0.0"
-    }
+    },
+    {
+      "name": "architecture",
+      "source": "./plugins/architecture",
+      "description": "Guidelines for structuring code",
+      "version": "1.0.0"
+   }
   ]
 }
