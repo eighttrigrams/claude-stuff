@@ -1,4 +1,4 @@
-# Clojure Stuff
+# Claude Stuff
 
 See also 
 - [eighttrigrams/preferences](https://github.com/eighttrigrams/claude-stuff)
