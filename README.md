@@ -43,6 +43,7 @@ Surprisingly to me, when I opened up a *Claude Code* console inside **VSCode**, 
 any further setup necessary. For example, it shows diffs then using VSCode editor windows.
 
 ## Clojure Skills plugin
+TODO move to recipes
 
 Provides SKILLS:
 - clojure-coding-conventions
@@ -54,6 +55,9 @@ Can be installed and removed at another location with
 $ claude
 claude> /plugin marketplace add eighttrigrams/claude-stuff
 ```
+
+It seems to me that the above step can be done from any claude anywhere and the following below then just "imports" this or enables 
+this in a specific claude workdir.
 
 And there in the `.claude/settings.json`:
 
