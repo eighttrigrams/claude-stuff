@@ -4,7 +4,7 @@
     "name": "eighttrigrams"
   },
   "metadata": {
-    "description": "Clojure skills for Claude Code",
+    "description": "Clojure and other skills for Claude Code",
     "version": "1.0.0",
     "pluginRoot": "./plugins"
   },
