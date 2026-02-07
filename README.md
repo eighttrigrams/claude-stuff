@@ -12,8 +12,25 @@ Provides SKILLS:
 Can be installed and removed at another location with
 
 ```
+$ claude
 claude> /plugin marketplace add eighttrigrams/claude-stuff
 claude> /plugin marketplace remove eighttrigrams/claude-stuff
+```
+
+And there in the `.claude/settings.json`:
+
+```json
+"extraKnownMarketplaces": {
+    "claude-stuff": {
+      "source": {
+        "source": "github",
+        "repo": "eighttrigrams/claude-stuff"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "writing-clojure@claude-stuff": true
+  }
 ```
 
 ```bash
