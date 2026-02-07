@@ -42,23 +42,6 @@ On the other hand, some artifacts like your local `~/.claude.md` are shared and 
 
 ## Getting started
 
-### Claude Code on Mac
-
-Use
-
-```sh
-$ npm install -g @anthropic-ai/claude-code
-```
-
-as per [docs.anthropic.com/en/docs/claude-code/setup](https://docs.anthropic.com/en/docs/claude-code/setup) and choose your account type (see above).
-
-Or use *Homebrew*.
-
-Surprisingly to me, when I opened up a *Claude Code* console inside **VSCode**, it integrated seemlessly and immediately without
-any further setup necessary. For example, it shows diffs then using VSCode editor windows.
-
-The main config file is under `~/.claude.json`. There is a configuration folder `~/.claude/`. It contains `settings.json` for permissions and `CLAUDE.md` for global preferences.
-
 ## Clojure MCP development
 
 MCP allows you to write tools to which your LLM has access to. In this repository, we find two examples, one
