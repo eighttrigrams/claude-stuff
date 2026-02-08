@@ -3,6 +3,7 @@
 Claude Plugins are collections of
 - agents definitions
 - skill definitions
+- command definition
 - hooks definitions (fire in parallel to project level hooks already defined, when matcher matches; TODO may be cool to define some here for uniform logging)
 - mcps (? not sure how that works)
 
