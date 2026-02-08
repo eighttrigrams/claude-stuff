@@ -1,11 +1,10 @@
 # How to use and make your own claude plugin marketplaces
 
+See also
+- [plugins](./claude-plugins.md)
+
 It seems like in order to 'host' plugins, like we do here, we cannot simply host a single plugin,
 but must do this using the marketplaces construct.
-
----
-
-TODO document using --plugin-dir like we did in builder
 
 ---
 
