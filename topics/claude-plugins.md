@@ -12,9 +12,9 @@ Claude Plugins are collections of
 - mcps (? not sure how that works)
 
 A plugin can be as simple as a local folder containing such files and directories as
-- `agents`
-- `skills`
-- `plugin.json`
+- `<your-local-plugin-folder>/agents`
+- `<your-local-plugin-folder>/skills`
+- `<your-local-plugin-folder>/plugin.json`
 
 the last of which looks something like this
 
@@ -26,7 +26,10 @@ the last of which looks something like this
 }
 ```
 
-Plugins can be distributed using Claude [marketplaces](./claude-marketplaces.md),
-but also being used, when provided as local folder, by calling `claude` with
+When provided as local folder, by calling `claude` with
 the `--plugin-dir` parameter, which takes a path, and which can be specified multiple times
 on a CLI call, to specify several of them.
+
+Plugins can also be distributed using Claude [marketplaces](./claude-marketplaces.md).
+Note that I noticed in this case the `plugin.json` is under a `.claude-plugin` folder,
+not sure for what that discrepancy is relevant.
