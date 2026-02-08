@@ -1,6 +1,7 @@
 # How to use and make your own claude plugin marketplaces
 
 See also
+- Anthropic "Discover and install prebuilt plugins through marketplaces" article [here](https://code.claude.com/docs/en/discover-plugins)
 - [plugins](./claude-plugins.md)
 
 It seems like in order to 'host' plugins, like we do here, we cannot simply host a single plugin,

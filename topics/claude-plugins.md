@@ -1,5 +1,9 @@
 # Claude Plugins
 
+See also
+- Anthropic "Create Plugins" article [here](https://code.claude.com/docs/en/plugins)
+- Marketplaces [here](./claude-marketplaces.md)
+
 Claude Plugins are collections of
 - agents definitions
 - skill definitions
