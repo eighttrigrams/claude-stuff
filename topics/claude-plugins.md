@@ -3,6 +3,7 @@
 See also
 - Anthropic "Create Plugins" article [here](https://code.claude.com/docs/en/plugins)
 - Marketplaces [here](./claude-marketplaces.md)
+- There is a `plugin-dev` plugin for Claude which is a "Toolkit for creating your own plugins" [source](https://code.claude.com/docs/en/discover-plugins#development-workflows)
 
 Claude Plugins are collections of
 - agents definitions
