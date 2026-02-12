@@ -20,6 +20,12 @@
       "source": "./plugins/architecture",
       "description": "Guidelines for structuring code",
       "version": "1.0.1"
-   }
+    },
+    {
+      "name": "tools",
+      "source": "./plugins/tools",
+      "description": "Reusable tools including tool-use logging",
+      "version": "1.0.0"
+    }
   ]
 }

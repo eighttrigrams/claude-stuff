@@ -1,0 +1,21 @@
+{
+  "name": "tools",
+  "description": "Reusable tools",
+  "version": "1.0.0",
+  "author": {
+    "name": "eighttrigrams"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/log-tools.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
