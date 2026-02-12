@@ -1,7 +1,7 @@
 {
   "name": "writing-clojure",
   "description": "Skills for writing Clojure code with REPL and nREPL support",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "eighttrigrams"
   }

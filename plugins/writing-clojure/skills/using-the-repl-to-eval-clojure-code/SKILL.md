@@ -17,44 +17,19 @@ Use this skill when you need to:
 
 ## How It Works
 
-The `clj-nrepl-eval` command evaluates Clojure code against an nREPL server. **Session state persists between evaluations**, so you can require a namespace in one evaluation and use it in subsequent calls. Each host:port combination maintains its own session file.
+The `clj-nrepl-eval` command evaluates Clojure code against an nREPL server. 
+**Session state persists between evaluations**, so you can require a namespace in one evaluation and use it in subsequent calls. 
+Each host:port combination maintains its own session file.
 
 ## Instructions
 
-### 0. Discover and select nREPL server
+### Discover and select nREPL server
 
-First, discover what nREPL servers are running in the current directory:
+For using the nREPL, we first need to know which port to connect to.
+If the port is not clear from context, by the human specifying it, or by an `.nrepl-port` file in the cwd,
+you can use `$ clj-nrepl-eval --discover-ports` (will show all nREPL servers (Clojure, Babashka, shadow-cljs, etc.) running in the current project directory).
 
-```bash
-clj-nrepl-eval --discover-ports
-```
-
-This will show all nREPL servers (Clojure, Babashka, shadow-cljs, etc.) running in the current project directory.
-
-**Then use the AskUserQuestion tool:**
-
-- **If ports are discovered:** Prompt user to select which nREPL port to use:
-  - **question:** "Which nREPL port would you like to use?"
-  - **header:** "nREPL Port"
-  - **options:** Present each discovered port as an option with:
-    - **label:** The port number 
-    - **description:** The server type and status (e.g., "Clojure nREPL server in current directory")
-  - Include up to 4 discovered ports as options
-  - The user can select "Other" to enter a custom port number
-
-- **If no ports are discovered:** Prompt user how to start an nREPL server:
-  - **question:** "No nREPL servers found. How would you like to start one?"
-  - **header:** "Start nREPL"
-  - **options:**
-    - **label:** "deps.edn alias", **description:** "Find and use an nREPL alias in deps.edn"
-    - **label:** "Leiningen", **description:** "Start nREPL using 'lein repl'"
-  - The user can select "Other" for alternative methods or if they already have a server running on a specific port
-
-IMPORTANT: IF you start a REPL do not supply a port let the nREPL start and return the port that it was started on.
-
-### 1. Evaluate Clojure Code
-
-> Evaluation automatically connects to the given port
+### Evaluate Clojure Code
 
 Use the `-p` flag to specify the port and pass your Clojure code.
 
@@ -81,21 +56,9 @@ EOF
 echo "(+ 1 2 3)" | clj-nrepl-eval -p <PORT>
 ```
 
-### 2. Display nREPL Sessions
+Command-line arguments take precedence over stdin
 
-**Discover all nREPL servers in current directory:**
-```bash
-clj-nrepl-eval --discover-ports
-```
-Shows all running nREPL servers in the current project directory, including their type (clj/bb/basilisp) and whether they match the current working directory.
-
-**Check previously connected sessions:**
-```bash
-clj-nrepl-eval --connected-ports
-```
-Shows only connections you have made before (appears after first evaluation on a port).
-
-### 3. Common Patterns
+### Common Patterns
 
 **Require a namespace (always use :reload to pick up changes):**
 ```bash
@@ -127,6 +90,8 @@ EOF
 ```
 *Note: Heredoc syntax may require permission approval.*
 
+For everything more than evaluating a single expression, using HEREDOC is strongly recommended.
+
 **With custom timeout (in milliseconds):**
 ```bash
 clj-nrepl-eval -p <PORT> --timeout 5000 "(long-running-fn)"
@@ -141,27 +106,20 @@ clj-nrepl-eval -p <PORT> --reset-session "(def x 1)"
 ## Available Options
 
 - `-p, --port PORT` - nREPL port (required)
-- `-H, --host HOST` - nREPL host (default: 127.0.0.1)
 - `-t, --timeout MILLISECONDS` - Timeout (default: 120000 = 2 minutes)
 - `-r, --reset-session` - Reset the persistent nREPL session
-- `-c, --connected-ports` - List previously connected nREPL sessions
-- `-d, --discover-ports` - Discover nREPL servers in current directory
 - `-h, --help` - Show help message
 
 ## Important Notes
 
-- **Prefer command-line arguments:** Pass code as quoted strings: `clj-nrepl-eval -p <PORT> "(+ 1 2 3)"` - works with existing permissions
-- **Heredoc for complex code:** Use heredoc (`<<'EOF' ... EOF`) for truly multiline code, but note it may require permission approval
+- **When using command-line arguments**, pass code as quoted strings: `clj-nrepl-eval -p <PORT> "(+ 1 2 3)"` - works with existing permissions
+- **Heredoc for complex code:** Use heredoc (`<<'EOF' ... EOF`) for truly multiline code
 - **Sessions persist:** State (vars, namespaces, loaded libraries) persists across invocations until the nREPL server restarts or `--reset-session` is used
-- **Automatic delimiter repair:** The tool automatically repairs missing or mismatched parentheses
 - **Always use :reload:** When requiring namespaces, use `:reload` to pick up recent changes
-- **Default timeout:** 2 minutes (120000ms) - increase for long-running operations
-- **Input precedence:** Command-line arguments take precedence over stdin
 
 ## Typical Workflow
 
-1. Discover nREPL servers: `clj-nrepl-eval --discover-ports`
-2. Use **AskUserQuestion** tool to prompt user to select a port
+1. Discover nREPL servers
 3. Require namespace:
    ```bash
    clj-nrepl-eval -p <PORT> "(require '[my.ns :as ns] :reload)"

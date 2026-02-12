@@ -5,16 +5,40 @@ description: When in need to not only read and understand, but to actually write
 
 Whenever we start editing Clojure Code, start by saying "Hammock Time!"
 
-## REPL & nREPL - Running code in the context of a running application.
+# Conventions
 
-Running code inside a running app is as simple as.
+- Atoms start with `*`, i.e. `*my-atom`, to be deref'ed as `@*my-atom`.
 
-```bash
-Discover available nREPL ports using the helper script:
+Prefer to write conditionals as compactly as possible.
 
-$ ./nrepl-ports.sh
-utwig                          47480
-Then connect:
+Bad:
 
-$ clj-nrepl-eval -p 47480 '(+ 1)'
+```clojure
+(if condition
+  (do-something a)
+  (do-something b))
+```
+
+Good
+
+```clojure
+(do-something 
+  (if condition a b))
+```
+
+With let bindings, default to returning results unnamed
+
+Bad:
+
+```clojure
+(let [a 1
+      result (do-stuff a)]
+  result)
+```
+
+Good:
+
+```clojure
+(let [a 1]
+  (do-stuff a))
 ```

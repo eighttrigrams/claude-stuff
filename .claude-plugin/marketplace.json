@@ -4,8 +4,8 @@
     "name": "eighttrigrams"
   },
   "metadata": {
-    "description": "Clojure and other skills for Claude Code",
-    "version": "1.0.0",
+    "description": "Clojure and architecture skills for Claude Code",
+    "version": "1.0.1",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -13,13 +13,13 @@
       "name": "writing-clojure",
       "source": "./plugins/writing-clojure",
       "description": "Skills for writing Clojure code with REPL and nREPL support",
-      "version": "1.0.0"
+      "version": "1.0.1"
     },
     {
       "name": "architecture",
       "source": "./plugins/architecture",
       "description": "Guidelines for structuring code",
-      "version": "1.0.0"
+      "version": "1.0.1"
    }
   ]
 }
