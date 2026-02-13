@@ -1,7 +1,7 @@
 # Claude Stuff
 
 See also 
-- [eighttrigrams/preferences](https://github.com/eighttrigrams/claude-stuff)
+- [eighttrigrams/preferences](https://github.com/eighttrigrams/preferences)
 
 ## Claude Code on Mac
 
