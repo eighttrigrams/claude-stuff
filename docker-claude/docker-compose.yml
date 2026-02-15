@@ -1,0 +1,10 @@
+services:
+  claude:
+    build: .
+    volumes:
+      - .:/workspace:rw
+    working_dir: /workspace
+    environment:
+      - CLAUDE_CODE_OAUTH_TOKEN
+    stdin_open: true
+    tty: true

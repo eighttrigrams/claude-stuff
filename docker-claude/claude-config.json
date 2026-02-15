@@ -1,0 +1,15 @@
+{
+  "numStartups": 1,
+  "autoUpdates": false,
+  "hasCompletedOnboarding": true,
+  "lastOnboardingVersion": "1.0.83",
+  "firstStartTime": "2026-01-01T00:00:00.000Z",
+  "userID": "docker-user",
+  "projects": {
+    "/workspace": {
+      "allowedTools": ["*"],
+      "hasTrustDialogAccepted": true,
+      "hasAllToolsApproved": true
+    }
+  }
+}
