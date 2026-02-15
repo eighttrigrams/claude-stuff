@@ -1,46 +1,39 @@
 # Claude Stuff
 
+Things I know and find important to document about Claude (Code).
+
+Some of it perhaps interesting to a wider audience, some of it clearly
+subject to my own preferences (see below).
+
+<details>
+
+- Clojure as a primary language I am focusing on
+- VSCode as my primary targeted IDE
+- GitHub, Docker on the tooling side
+- MacOS as my OS, Linux inside containers and remote
+
 See also 
 - [eighttrigrams/preferences](https://github.com/eighttrigrams/preferences)
 
-## Claude Code on Mac
+</details>
 
-### Installation
+## Topics
 
-Use
+- [Claude Code Configuration Files](./topics/claude-code-configuration.md)
+- [Claude and VSCode](./topics/claude-and-vscode.md)
+- [Claude Plugins](./topics/claude-plugins.md)
+- [Claude Marketplaces](./topics/claude-marketplaces.md)
+- [clojure-claude-and-mcp-knowledge](./clojure-claude-and-mcp-knowledge/README.md).
 
-```sh
-$ npm install -g @anthropic-ai/claude-code
-```
+## Recipes
 
-as per [docs.anthropic.com/en/docs/claude-code/setup](https://docs.anthropic.com/en/docs/claude-code/setup) and choose your account type (see above).
+- [How to Install Claude Code](./recipes/how-to-install-claude-code.md)
+- [Adding and Removing MCP Servers](./recipes/adding-and-removing-mcp-servers.md)
+- [Docker Claude Container](./recipes/docker-claude-container.md)
 
-Or use *Homebrew*.
+## Issues
 
-### Configuration files
-
-The main config file is under `~/.claude.json`. I believe it is not really meant to be edited by hand.
-Rather, it keeps tabs about where your claude working directories are on your system and what your preferences are
-there, apart from the things you yourself specify in these working dirs.
-
-***Working dirs*** means that when you open `claude` in a dir `/Users/dan/Workspace/a`, its settings get stored independently
-from those which get stored for a working dir on the same system, at a different path, say `/Users/dan/Workspace/b`.
-
-TODO talk about
-- projects key in that file
-- more than one way to store configuration about mcp servers
-
-## "Memory"
-
-A metaphor, which you see from the scare quotes, I don't like, for whichever reason, although I'm generally a fan of metaphors.
-
-There is a configuration folder `~/.claude/`. 
-It contains `settings.json` for permissions and `CLAUDE.md` for global preferences.
-
-### VSCode
-
-Surprisingly to me, when I opened up a *Claude Code* console inside **VSCode**, it integrated seemlessly and immediately without
-any further setup necessary. For example, it shows diffs then using VSCode editor windows.
+- [Claude Shows Claude.ai Connectors in Claude Code](./issues/claude-shows-claude-ai-connectors-in-claude-code.md)
 
 ## Claude stuff marketplace
 
@@ -50,5 +43,6 @@ The claude-stuff Claude "marketplace" provides 2 plugins, with a couple of SKILL
   - using-the-repl-to-eval-clojure-code (note: this is a nREPL [SKILL](https://github.com/bhauman/clojure-mcp-light/blob/main/skills/clojure-eval/SKILL.md) for using `clj-nrepl-eval` which I copied wholesale over; naturally we want to have that installed via `clojure-mcp-light` via `bbin`)
 - architecture
   - architecture review
+  - writing-tests
 
-See [claude-marketplaces](./recipes/claude-marketplaces.md).
+See [claude-marketplaces](./topics/claude-marketplaces.md).
