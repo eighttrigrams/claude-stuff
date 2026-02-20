@@ -28,7 +28,7 @@ See also
 ## Recipes
 
 - [How to Install Claude Code](./recipes/how-to-install-claude-code.md)
-- [Adding and Removing MCP Servers](./recipes/adding-and-removing-mcp-servers.md)
+- [Working with MCP](./recipes/working-with-mcp.md)
 - [Docker Claude Container](./recipes/docker-claude-container.md)
 
 ## Issues
