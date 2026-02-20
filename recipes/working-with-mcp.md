@@ -21,12 +21,6 @@ $ npx playwright install
 $ claude mcp add playwright -- npx -y @playwright/mcp
 ```
 
-The corresponding remove command is
-
-```bash
-$ claude mcp remove <mcp-name>
-```
-
 When I open `claude` next time in that directory, it has that MCP
 available; when I open `claude` in another directory, this does not apply.
 
@@ -58,6 +52,23 @@ An example:
 
 One advantage is that we can easily hand edit such a file and we can see
 how this is useful for setting specific call parameters, as shown above.
+
+The corresponding remove command is
+
+```bash
+$ claude mcp remove <mcp-name>
+```
+
+For our example
+
+
+```bash
+$ claude mcp remove playwright
+```
+
+Should I have defined playwright in both places, it asks me whether to
+remove it from the local or the project scope. TIL that local scope 
+refers to `~/.claude.json` and project scope to `<my-project>/.mcp.json`.
 
 TODO
 - plugins
