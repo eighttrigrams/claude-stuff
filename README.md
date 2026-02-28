@@ -37,12 +37,24 @@ See also
 
 ## Claude stuff marketplace
 
-The claude-stuff Claude "marketplace" provides 2 plugins, with a couple of SKILLs each
-- writing-clojure
-  - clojure-coding-conventions
-  - using-the-repl-to-eval-clojure-code (note: this is a nREPL [SKILL](https://github.com/bhauman/clojure-mcp-light/blob/main/skills/clojure-eval/SKILL.md) for using `clj-nrepl-eval` which I copied wholesale over; naturally we want to have that installed via `clojure-mcp-light` via `bbin`)
-- architecture
-  - architecture review
-  - writing-tests
+The claude-stuff Claude "marketplace" provides 3 plugins.
 
-See [claude-marketplaces](./topics/claude-marketplaces.md).
+Note: see [claude-marketplaces](./topics/claude-marketplaces.md) for more info on Claude marketplaces.w
+
+### Tools Plugin 'tools'
+
+Provides a logging hook with a little bit of nicely formatted logging.
+
+### Writing Clojure Plugin 'writing-clojure'
+
+Provides the following SKILLs:
+
+- clojure-coding-conventions
+- using-the-repl-to-eval-clojure-code (note: this is a nREPL [SKILL](https://github.com/bhauman/clojure-mcp-light/blob/main/skills/clojure-eval/SKILL.md) for using `clj-nrepl-eval` which I copied wholesale over; naturally we want to have that installed via `clojure-mcp-light` via `bbin`)
+
+## Architecture Plugin 'architecture'
+
+Provides the following SKILLs:
+
+- architecture review
+- writing-tests

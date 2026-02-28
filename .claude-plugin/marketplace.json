@@ -25,7 +25,7 @@
       "name": "tools",
       "source": "./plugins/tools",
       "description": "Reusable tools including tool-use logging",
-      "version": "1.0.0"
+      "version": "1.0.1"
     }
   ]
 }
