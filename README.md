@@ -39,7 +39,7 @@ See also
 
 The claude-stuff Claude "marketplace" provides 3 plugins.
 
-Note: see [claude-marketplaces](./topics/claude-marketplaces.md) for more info on Claude marketplaces.w
+Note: see [claude-marketplaces](./topics/claude-marketplaces.md) for more info on Claude marketplaces.
 
 ### Tools Plugin 'tools'
 
