@@ -45,12 +45,9 @@ Note: see [claude-marketplaces](./topics/claude-marketplaces.md) for more info o
 
 Provides a logging hook with a little bit of nicely formatted logging.
 
-### Writing Clojure Plugin 'writing-clojure'
+### clj-nrepl-eval Plugin 'clj-nrepl-eval'
 
-Provides the following SKILLs:
-
-- clojure-coding-conventions
-- using-the-repl-to-eval-clojure-code (note: this is a nREPL [SKILL](https://github.com/bhauman/clojure-mcp-light/blob/main/skills/clojure-eval/SKILL.md) for using `clj-nrepl-eval` which I copied wholesale over; naturally we want to have that installed via `clojure-mcp-light` via `bbin`)
+Provides the clj-nrepl-eval SKILL for evaluating Clojure code via nREPL (note: this is a nREPL [SKILL](https://github.com/bhauman/clojure-mcp-light/blob/main/skills/clojure-eval/SKILL.md) for using `clj-nrepl-eval` which I copied wholesale over; naturally we want to have that installed via `clojure-mcp-light` via `bbin`).
 
 ## Architecture Plugin 'architecture'
 
