@@ -10,10 +10,10 @@
   },
   "plugins": [
     {
-      "name": "writing-clojure",
-      "source": "./plugins/writing-clojure",
-      "description": "Skills for writing Clojure code with REPL and nREPL support",
-      "version": "1.0.1"
+      "name": "clj-nrepl-eval",
+      "source": "./plugins/clj-nrepl-eval",
+      "description": "Evaluate Clojure code via nREPL using the clj-nrepl-eval command",
+      "version": "1.0.0"
     },
     {
       "name": "architecture",

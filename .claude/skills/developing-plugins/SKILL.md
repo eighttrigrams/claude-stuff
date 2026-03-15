@@ -49,6 +49,7 @@ After renaming or restructuring a plugin, users need to uninstall the old one an
 ## Checklist
 
 - When adding, removing, or renaming a plugin, update the project's `README.md` to reflect the change
+- When adding, removing, or renaming a plugin, update `.claude-plugin/marketplace.json` — this is what the marketplace uses to discover plugins
 
 ## Findings
 
