@@ -1,5 +1,5 @@
 {
-  "name": "claude-stuff",
+  "name": "eighttrigrams",
   "owner": {
     "name": "eighttrigrams"
   },
@@ -26,6 +26,12 @@
       "source": "./plugins/tools",
       "description": "Reusable tools including tool-use logging",
       "version": "1.0.1"
+    },
+    {
+      "name": "editor-layouts",
+      "source": "./plugins/editor-layouts",
+      "description": "Knowledge about the editor-layouts VS Code extension",
+      "version": "1.0.0"
     }
   ]
 }

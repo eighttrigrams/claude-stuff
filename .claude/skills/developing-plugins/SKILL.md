@@ -1,6 +1,6 @@
 ---
 name: developing-plugins
-description: Findings and notes about developing Claude Code plugins. Use when working on plugin structure, skills, hooks, or marketplace setup in the claude-stuff repo.
+description: Findings and notes about developing Claude Code plugins. Use when working on plugin structure, skills, hooks, or marketplace setup in the eighttrigrams repo.
 ---
 
 # Developing Plugins
@@ -42,7 +42,7 @@ Minimal:
 
 ## Installation
 
-Plugins from this repo (a "marketplace") are installed via `/install-plugin` from within a project. They get cached under `~/.claude/plugins/cache/claude-stuff/<plugin-name>/<version>/`. The registry is `~/.claude/plugins/installed_plugins.json`.
+Plugins from this repo (a "marketplace") are installed via `/install-plugin` from within a project. They get cached under `~/.claude/plugins/cache/eighttrigrams/<plugin-name>/<version>/`. The registry is `~/.claude/plugins/installed_plugins.json`.
 
 After renaming or restructuring a plugin, users need to uninstall the old one and install the new one.
 

@@ -35,9 +35,9 @@ See also
 
 - [Claude Shows Claude.ai Connectors in Claude Code](./issues/claude-shows-claude-ai-connectors-in-claude-code.md)
 
-## Claude stuff marketplace
+## Eighttrigrams marketplace
 
-The claude-stuff Claude "marketplace" provides 3 plugins.
+The eighttrigrams Claude "marketplace" provides 4 plugins.
 
 Note: see [claude-marketplaces](./topics/claude-marketplaces.md) for more info on Claude marketplaces.
 

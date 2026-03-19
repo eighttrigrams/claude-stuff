@@ -1,0 +1,8 @@
+{
+  "name": "editor-layouts",
+  "description": "Knowledge about the editor-layouts VS Code extension",
+  "version": "1.0.0",
+  "author": {
+    "name": "eighttrigrams"
+  }
+}
