@@ -1,5 +1,5 @@
 ---
-name: using-the-repl-to-eval-clojure-code
+name: clj-nrepl-eval
 description: Evaluate Clojure code via nREPL using clj-nrepl-eval. Use this when you need to test code, check if edited files compile, verify function behavior, or interact with a running REPL session.
 ---
 
@@ -17,8 +17,8 @@ Use this skill when you need to:
 
 ## How It Works
 
-The `clj-nrepl-eval` command evaluates Clojure code against an nREPL server. 
-**Session state persists between evaluations**, so you can require a namespace in one evaluation and use it in subsequent calls. 
+The `clj-nrepl-eval` command evaluates Clojure code against an nREPL server.
+**Session state persists between evaluations**, so you can require a namespace in one evaluation and use it in subsequent calls.
 Each host:port combination maintains its own session file.
 
 ## Instructions

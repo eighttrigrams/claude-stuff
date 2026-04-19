@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PROJECT_DIR="$(pwd)"
-LOG_DIR="$PROJECT_DIR/logs"
+LOG_DIR="$CLAUDE_PROJECT_DIR/logs"
 mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/hooks.log"
 
@@ -34,15 +33,15 @@ elif [ "$TOOL_NAME" = "Skill" ]; then
   fi
 elif [ "$TOOL_NAME" = "Read" ]; then
   FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
-  REL_PATH="${FILE_PATH#$PROJECT_DIR/}"
+  REL_PATH="${FILE_PATH#$CLAUDE_PROJECT_DIR/}"
   echo "$TIMESTAMP - PreToolUse - Read($REL_PATH)" >> "$LOG_FILE"
 elif [ "$TOOL_NAME" = "Write" ]; then
   FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
-  REL_PATH="${FILE_PATH#$PROJECT_DIR/}"
+  REL_PATH="${FILE_PATH#$CLAUDE_PROJECT_DIR/}"
   echo "$TIMESTAMP - PreToolUse - Write($REL_PATH)" >> "$LOG_FILE"
 elif [ "$TOOL_NAME" = "Edit" ]; then
   FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
-  REL_PATH="${FILE_PATH#$PROJECT_DIR/}"
+  REL_PATH="${FILE_PATH#$CLAUDE_PROJECT_DIR/}"
   echo "$TIMESTAMP - PreToolUse - Edit($REL_PATH)" >> "$LOG_FILE"
 elif [ "$TOOL_NAME" = "WebFetch" ]; then
   URL=$(echo "$INPUT" | jq -r '.tool_input.url // empty' 2>/dev/null)
@@ -55,7 +54,7 @@ elif [ "$TOOL_NAME" = "Grep" ]; then
   PATTERN=$(echo "$INPUT" | jq -r '.tool_input.pattern // empty' 2>/dev/null)
   PATH_ARG=$(echo "$INPUT" | jq -r '.tool_input.path // empty' 2>/dev/null)
   GLOB=$(echo "$INPUT" | jq -r '.tool_input.glob // empty' 2>/dev/null)
-  REL_PATH="${PATH_ARG#$PROJECT_DIR/}"
+  REL_PATH="${PATH_ARG#$CLAUDE_PROJECT_DIR/}"
   LOG_MSG="$TIMESTAMP - PreToolUse - Grep($PATTERN)"
   [ -n "$REL_PATH" ] && LOG_MSG="$LOG_MSG path=$REL_PATH"
   [ -n "$GLOB" ] && LOG_MSG="$LOG_MSG glob=$GLOB"
@@ -63,7 +62,7 @@ elif [ "$TOOL_NAME" = "Grep" ]; then
 elif [ "$TOOL_NAME" = "Glob" ]; then
   PATTERN=$(echo "$INPUT" | jq -r '.tool_input.pattern // empty' 2>/dev/null)
   PATH_ARG=$(echo "$INPUT" | jq -r '.tool_input.path // empty' 2>/dev/null)
-  REL_PATH="${PATH_ARG#$PROJECT_DIR/}"
+  REL_PATH="${PATH_ARG#$CLAUDE_PROJECT_DIR/}"
   LOG_MSG="$TIMESTAMP - PreToolUse - Glob($PATTERN)"
   [ -n "$REL_PATH" ] && LOG_MSG="$LOG_MSG path=$REL_PATH"
   echo "$LOG_MSG" >> "$LOG_FILE"

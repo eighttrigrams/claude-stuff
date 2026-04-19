@@ -35,18 +35,17 @@ See also
 
 - [Claude Shows Claude.ai Connectors in Claude Code](./issues/claude-shows-claude-ai-connectors-in-claude-code.md)
 
-## Claude stuff marketplace
+## Eighttrigrams marketplace
 
 See [claude-marketplaces](./topics/claude-marketplaces.md) for background.
 
 ### Plugins
 
-#### writing-clojure
+#### clj-nrepl-eval
 
-Skills for writing Clojure code with REPL and nREPL support.
+Evaluating Clojure code via nREPL.
 
-- [Clojure coding conventions](plugins/writing-clojure/skills/clojure-coding-conventions/SKILL.md)
-- [Using the REPL to eval Clojure code](plugins/writing-clojure/skills/using-the-repl-to-eval-clojure-code/SKILL.md) — nREPL [SKILL](https://github.com/bhauman/clojure-mcp-light/blob/main/skills/clojure-eval/SKILL.md) copied wholesale from [bhauman/clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light); install `clj-nrepl-eval` via `bbin`
+- [clj-nrepl-eval](plugins/clj-nrepl-eval/skills/clj-nrepl-eval/SKILL.md) — nREPL [SKILL](https://github.com/bhauman/clojure-mcp-light/blob/main/skills/clojure-eval/SKILL.md) copied wholesale from [bhauman/clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light); install `clj-nrepl-eval` via `bbin`
 
 #### architecture
 
@@ -65,3 +64,7 @@ Skills for working with Rhizome — UI navigation and local REST API.
 
 - [Navigate Rhizome user interface](plugins/rhizome/skills/navigate-rhizome-user-interface/SKILL.md)
 - [Rhizome REST API](plugins/rhizome/skills/rhizome-rest-api/SKILL.md)
+
+#### editor-layouts
+
+- [Editor layouts](plugins/editor-layouts/skills/editor-layouts/SKILL.md)

@@ -23,7 +23,7 @@ And there in the `.claude/settings.json`:
 
 ```json
 "extraKnownMarketplaces": {
-    "claude-stuff": {
+    "eighttrigrams": {
       "source": {
         "source": "github",
         "repo": "eighttrigrams/claude-stuff"
@@ -31,7 +31,7 @@ And there in the `.claude/settings.json`:
     }
   },
   "enabledPlugins": {
-    "writing-clojure@claude-stuff": true
+    "writing-clojure@eighttrigrams": true
   }
 ```
 

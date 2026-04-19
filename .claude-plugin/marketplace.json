@@ -1,5 +1,5 @@
 {
-  "name": "claude-stuff",
+  "name": "eighttrigrams",
   "owner": {
     "name": "eighttrigrams"
   },
@@ -10,21 +10,27 @@
   },
   "plugins": [
     {
-      "name": "writing-clojure",
-      "source": "./plugins/writing-clojure",
-      "description": "Skills for writing Clojure code with REPL and nREPL support",
-      "version": "1.0.1"
+      "name": "clj-nrepl-eval",
+      "source": "./plugins/clj-nrepl-eval",
+      "description": "Evaluate Clojure code via nREPL using the clj-nrepl-eval command",
+      "version": "1.0.0"
     },
     {
       "name": "architecture",
       "source": "./plugins/architecture",
       "description": "Guidelines for structuring code",
-      "version": "1.0.1"
+      "version": "1.0.3"
     },
     {
       "name": "tools",
       "source": "./plugins/tools",
       "description": "Reusable tools including tool-use logging",
+      "version": "1.0.1"
+    },
+    {
+      "name": "editor-layouts",
+      "source": "./plugins/editor-layouts",
+      "description": "Knowledge about the editor-layouts VS Code extension",
       "version": "1.0.0"
     },
     {

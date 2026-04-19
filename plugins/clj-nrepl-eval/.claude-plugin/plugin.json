@@ -1,0 +1,8 @@
+{
+  "name": "clj-nrepl-eval",
+  "description": "Evaluate Clojure code via nREPL using the clj-nrepl-eval command",
+  "version": "1.0.0",
+  "author": {
+    "name": "eighttrigrams"
+  }
+}
