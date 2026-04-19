@@ -37,12 +37,31 @@ See also
 
 ## Claude stuff marketplace
 
-The claude-stuff Claude "marketplace" provides 2 plugins, with a couple of SKILLs each
-- writing-clojure
-  - clojure-coding-conventions
-  - using-the-repl-to-eval-clojure-code (note: this is a nREPL [SKILL](https://github.com/bhauman/clojure-mcp-light/blob/main/skills/clojure-eval/SKILL.md) for using `clj-nrepl-eval` which I copied wholesale over; naturally we want to have that installed via `clojure-mcp-light` via `bbin`)
-- architecture
-  - architecture review
-  - writing-tests
+See [claude-marketplaces](./topics/claude-marketplaces.md) for background.
 
-See [claude-marketplaces](./topics/claude-marketplaces.md).
+### Plugins
+
+#### writing-clojure
+
+Skills for writing Clojure code with REPL and nREPL support.
+
+- [Clojure coding conventions](plugins/writing-clojure/skills/clojure-coding-conventions/SKILL.md)
+- [Using the REPL to eval Clojure code](plugins/writing-clojure/skills/using-the-repl-to-eval-clojure-code/SKILL.md) — nREPL [SKILL](https://github.com/bhauman/clojure-mcp-light/blob/main/skills/clojure-eval/SKILL.md) copied wholesale from [bhauman/clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light); install `clj-nrepl-eval` via `bbin`
+
+#### architecture
+
+Guidelines for structuring code.
+
+- [Architecture review](plugins/architecture/skills/architecture-review/SKILL.md)
+- [Writing tests](plugins/architecture/skills/writing-tests/SKILL.md)
+
+#### tools
+
+Reusable tools — currently a `PreToolUse` hook that logs every tool invocation.
+
+#### rhizome
+
+Skills for working with Rhizome — UI navigation and local REST API.
+
+- [Navigate Rhizome user interface](plugins/rhizome/skills/navigate-rhizome-user-interface/SKILL.md)
+- [Rhizome REST API](plugins/rhizome/skills/rhizome-rest-api/SKILL.md)
