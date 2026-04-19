@@ -97,6 +97,37 @@ context's id, use `/related`:
 curl -sf "http://127.0.0.1:3006/rest/items/<people-ctx-id>/related?q=Daniel"
 ```
 
+### Semantic / vector search
+
+`/items/:id/related` takes `vector=true` to switch from SQL LIKE to cosine
+similarity. The query `q` is embedded by local Ollama (`nomic-embed-text`,
+768-dim) and matched against `items.embedding` via pgvector.
+
+```bash
+curl -sf "http://127.0.0.1:3006/rest/items/9659/related?vector=true&q=history%20of%20oil"
+```
+
+Important: **only items with a non-empty description get embedded** — both
+on ingestion (POST /rest/items, PUT /rest/items/:id) and via the backfill
+endpoint below. Title-only items are intentionally skipped and will never
+appear in vector results.
+
+### Embedding backfill
+
+`POST /rest/backfill/embeddings` embeds every item that has a description
+and a NULL embedding. Idempotent and resumable — safe to re-run (or
+interrupt and re-run). Gated by recording mode. The request blocks until
+completion and returns `{"embedded": N}` (or `{"embedded": 0, "dry-run":
+true}` when recording is off).
+
+```bash
+curl -sf -X POST "http://127.0.0.1:3006/rest/backfill/embeddings"
+```
+
+Run this after bulk-ingest scripts (the rhizome-ingest scripts already call
+it at the end), or periodically if items were created via the UI (the UI
+path bypasses the per-item embed hook).
+
 ## Writing
 
 **Write endpoints are gated by "recording mode".** `POST /rest/contexts`,

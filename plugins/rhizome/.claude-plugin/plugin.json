@@ -1,7 +1,7 @@
 {
   "name": "rhizome",
   "description": "Skills for working with Rhizome — UI navigation and local REST API",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": {
     "name": "eighttrigrams"
   }
