@@ -118,15 +118,6 @@ To enable recording: inside the running Rhizome app, press **Option+Shift+W**.
 A red ⚠ REC badge appears in the top-left corner while the mode is active.
 Toggle it off with the same shortcut.
 
-Programmatic access:
-
-```bash
-# check current state
-curl -sf "http://127.0.0.1:3006/rest/recording-mode"
-# toggle (the shortcut posts here)
-curl -sf -X POST "http://127.0.0.1:3006/rest/recording-mode/toggle"
-```
-
 Either way, every attempted write is logged to `rhizome/rhizome.log` regardless
 of whether it was executed or dropped.
 
