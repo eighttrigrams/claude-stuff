@@ -38,6 +38,12 @@
       "source": "./plugins/rhizome",
       "description": "Skills for working with Rhizome — UI navigation and local REST API",
       "version": "1.0.3"
+    },
+    {
+      "name": "tracker",
+      "source": "./plugins/tracker",
+      "description": "Skills for working with Tracker — local REST API for reading and writing tasks",
+      "version": "1.0.0"
     }
   ]
 }
