@@ -17,9 +17,9 @@ is `3027`. Request/response bodies are JSON. Use `curl` directly.
 Tracker must be running locally (`make start` in `tracker/`) for any of this
 to work. Logs at `tracker/logs/tracker.log`.
 
-There is no separate `/rest/*` namespace anymore. The same `/api/*` endpoints
-the UI uses are also the machine-callable endpoints — what changes is *who*
-is calling and *whether the recording-mode gate applies*.
+The same `/api/*` endpoints the UI uses are also the machine-callable
+endpoints — what changes is *who* is calling and *whether the recording-mode
+gate applies*.
 
 ## Caller identity: regular users vs machine users
 
