@@ -1,7 +1,7 @@
 {
   "name": "tracker",
   "description": "Skills for working with Tracker — local REST API for reading and writing tasks",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": {
     "name": "eighttrigrams"
   }
