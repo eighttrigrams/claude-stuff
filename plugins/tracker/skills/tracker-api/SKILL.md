@@ -1,10 +1,12 @@
 ---
 name: tracker-api
-description: Tracker's HTTP API — authenticate as a machine user, read tasks/today-board, and write through the recording-mode gate via curl
+description: Tracker's HTTP API — authenticate as a machine user, read tasks/meets/journals/today-board, ingest mail messages, write through the recording-mode gate via curl
 triggers:
   - tracker api
   - tracker today
   - tracker tasks
+  - tracker meets
+  - tracker journal
   - today board
   - add to tracker
 ---
@@ -28,183 +30,378 @@ Tracker has two kinds of authenticated callers:
 - **Regular users** — the human accounts that sign in to the web UI. Writes
   go through with no extra gating.
 - **Machine users** — accounts created in admin → Users with the *Machine
-  user* checkbox + a target user. They have a name and password of their own
-  and authenticate exactly like a regular user, but their JWT carries
-  `is-machine-user: true` and a `for-user-id` claim. The server resolves all
-  data access against `for-user-id` (so the machine acts on the bound user's
-  tasks, meets, journals), and **all write requests are gated by recording
-  mode** (see below). At most one machine user per regular user.
+  user* checkbox + a target user. They authenticate exactly like a regular
+  user, but their JWT carries `is-machine-user: true` and a `for-user-id`
+  claim. The server resolves all data access against `for-user-id` (so the
+  machine acts on the bound user's tasks, meets, journals, mail, ...), and
+  most write requests are gated by recording mode (see below). At most one
+  machine user per regular user.
 
-Read access for machine users is unrestricted — they can fetch the bound
-user's tasks/today-board/etc at any time.
+Read access for machine users is unrestricted.
 
 ## Authentication
 
-### Dev mode (local, default for `make start`)
+### Dev mode (local)
 
-The server is bound to `127.0.0.1`, so access already assumes local shell
-access. Credentials are not required for reads or writes — pick the user by
-setting an `X-User-Id` header, or omit it to target the first user.
+Bound to `127.0.0.1`. No credentials required. Pick the user with
+`X-User-Id`, or omit to target the first user.
 
 ```bash
-# Dev — pick a user explicitly
 curl -sf -H "X-User-Id: 3" http://127.0.0.1:3027/api/tasks?sort=today
-
-# No header → first user
-curl -sf http://127.0.0.1:3027/api/tasks?sort=today
 ```
 
-In dev mode, the recording-mode gate does **not** fire unless you send a
-real machine-user JWT (see below). The header path bypasses the gate.
+In dev mode the recording-mode gate fires only when you send a real
+machine-user JWT. The `X-User-Id` path bypasses it.
 
-### Production mode (`DEV` unset, `ADMIN_PASSWORD` set, or on Fly)
+### Production mode
 
-Every mutating `/api/*` request requires a Bearer JWT. Reads also require it
-unless you're hitting an unauthenticated public endpoint.
+Every mutating `/api/*` request requires a Bearer JWT.
 
 ```bash
-# 1) Log in as a machine user — get a token
 TOKEN=$(curl -sf -X POST http://tracker.example.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"my-machine","password":"s3cret"}' | jq -r .token)
 
-# 2) Use it on every subsequent request
 curl -sf -H "Authorization: Bearer $TOKEN" \
   http://tracker.example.com/api/today-board
 ```
 
-Regular users use the same `/api/auth/login` flow with their own credentials.
-Admin uses `"username":"admin"` + the server's `ADMIN_PASSWORD`.
+Admin: `"username":"admin"` + the server's `ADMIN_PASSWORD`.
 
-## Reading
+## The recording-mode gate
 
-### Today board (machine-friendly aggregate)
+For machine-user callers, mutating requests (`POST`/`PUT`/`DELETE`) are
+intercepted before reaching the handler:
 
-Returns tasks, meets, and journal entries for today in a single fetch.
-Designed for machine consumers that want the complete picture in one call.
+- The intent is logged to `tracker/logs/tracker.log` regardless of outcome.
+- If recording mode is **ON**, the handler runs.
+- If recording mode is **OFF**, the request returns `{"dropped":true}`
+  (HTTP 200) and nothing hits the database.
+
+Regular UI users are never gated.
+
+Toggle from inside the UI with **Alt+Shift+W** (or `POST
+/api/recording-mode/toggle`). A red REC badge appears in the top bar. The
+toggle is **human-only** — agents must not flip it.
+
+### Gate exemptions
+
+These endpoints are exempt from the gate even for machine users — they
+always go through:
+
+- `POST /api/messages` — mail inbox ingestion. Mail is always inbox-only
+  noise until the human triages it in the UI, so the gate would only get
+  in the way of automation.
+
+Everything else gated for machine users (tasks, meets, journals, etc.).
+
+## Endpoint overview
+
+```
+POST   /api/auth/login                      → {token, user}
+GET    /api/auth/required                   → {required: bool}
+GET    /api/auth/available-users            → list (dev mode only)
+
+GET    /api/today-board                     → {tasks, meets, journal-entries}
+GET    /api/translations                    → i18n strings
+GET    /api/export                          → user data export (zip)
+GET    /api/reports                         → reporting handler
+POST   /api/recording-mode/toggle           → {recording: bool}
+
+# Tasks (see /tasks below)
+# Meets / meeting series / recurring tasks
+# Messages (mail inbox)
+# Resources
+# Journals / journal entries
+# Categories: people / places / projects / goals
+# Relations
+# Users (admin only)
+```
+
+## Tasks
+
+```bash
+# List with sort modes: recent (default), today, due-date, done, manual, reminder
+curl -sf "http://127.0.0.1:3027/api/tasks?sort=today"
+
+# Free-text search on title/tags
+curl -sf "http://127.0.0.1:3027/api/tasks?q=deploy"
+
+# Filter by importance, scope, categories
+curl -sf "http://127.0.0.1:3027/api/tasks?importance=important&context=work&strict=true"
+curl -sf "http://127.0.0.1:3027/api/tasks?projects=12,13&excluded-places=4"
+
+# Single task
+curl -sf http://127.0.0.1:3027/api/tasks/42
+```
+
+Mutations:
+
+```bash
+# Create
+POST /api/tasks                {"title":"Ship demo","scope":"work"}
+# Update title/description/tags
+PUT  /api/tasks/:id            {"title":"...","description":"...","tags":"..."}
+# Delete
+DELETE /api/tasks/:id
+# Toggle done / today flag
+PUT  /api/tasks/:id/done       {"done": true|false}
+PUT  /api/tasks/:id/today      {"today": true|false}
+# Schedule
+PUT  /api/tasks/:id/due-date   {"due-date":"2026-05-01"}     # null clears
+PUT  /api/tasks/:id/due-time   {"due-time":"14:00"}          # null clears
+# Priorities
+PUT  /api/tasks/:id/scope      {"scope":"private|both|work"}
+PUT  /api/tasks/:id/importance {"importance":"normal|important|critical"}
+PUT  /api/tasks/:id/urgency    {"urgency":"default|urgent|superurgent"}
+# Lined-up-for / reminders
+PUT  /api/tasks/:id/lined-up-for {"lined-up-for":"YYYY-MM-DD"}
+PUT  /api/tasks/:id/reminder     {"reminder":"YYYY-MM-DD HH:MM"}
+PUT  /api/tasks/:id/acknowledge-reminder
+# Manual reorder
+POST /api/tasks/:id/reorder    {"target-task-id":99,"position":"before|after"}
+# Categorize
+POST   /api/tasks/:id/categorize   {"category-type":"person|place|project|goal","category-id":12}
+DELETE /api/tasks/:id/categorize   {"category-type":"...","category-id":12}
+```
+
+Task response shape:
+
+```json
+{
+  "id": 42, "title": "...", "description": "", "tags": "",
+  "done": 0, "today": 1,
+  "urgency": "default", "importance": "normal", "scope": "both",
+  "due_date": null, "due_time": null,
+  "lined_up_for": null, "reminder": null, "reminder_date": null,
+  "created_at": "...", "modified_at": "...", "done_at": null,
+  "sort_order": -3.0, "recurring_task_id": null,
+  "people": [], "places": [], "projects": [], "goals": [],
+  "relations": []
+}
+```
+
+`done` and `today` are integers (0/1), not booleans.
+
+## Meets
+
+A *meet* is a one-off meeting with a date/time. Recurring meetings live as
+*meeting series* that materialize meets.
+
+```bash
+# List — sort: upcoming (default, future + non-archived), past, summary
+curl -sf "http://127.0.0.1:3027/api/meets?sort=upcoming"
+curl -sf "http://127.0.0.1:3027/api/meets?series-id=7"
+
+# Single
+curl -sf http://127.0.0.1:3027/api/meets/15
+```
+
+Mutations mirror tasks:
+
+```
+POST   /api/meets                 {"title":"Sync with Sara","scope":"work"}
+PUT    /api/meets/:id             {"title":"...","description":"...","tags":"..."}
+DELETE /api/meets/:id
+PUT    /api/meets/:id/start-date  {"start-date":"2026-05-03"}    # null clears
+PUT    /api/meets/:id/start-time  {"start-time":"10:30"}         # null clears
+PUT    /api/meets/:id/scope       {"scope":"private|both|work"}
+PUT    /api/meets/:id/importance  {"importance":"normal|important|critical"}
+PUT    /api/meets/:id/archive     {"archived": true|false}
+POST   /api/meets/:id/categorize     {"category-type":"...","category-id":...}
+DELETE /api/meets/:id/categorize     {"category-type":"...","category-id":...}
+```
+
+### Meeting series (recurring meetings)
+
+```
+GET    /api/meeting-series
+GET    /api/meeting-series/:id
+GET    /api/meeting-series/:id/taken-dates       # dates already materialized
+POST   /api/meeting-series                       {"title":"..."}
+PUT    /api/meeting-series/:id                   {"title":"...","description":"..."}
+DELETE /api/meeting-series/:id
+PUT    /api/meeting-series/:id/scope             {"scope":"..."}
+PUT    /api/meeting-series/:id/schedule          {"mode":"weekly|biweekly|monthly", ...}
+POST   /api/meeting-series/:id/create-meeting    # materialize the next meet
+```
+
+## Recurring tasks
+
+Same shape as meeting series; materialize tasks instead of meets.
+
+```
+GET    /api/recurring-tasks
+GET    /api/recurring-tasks/:id
+GET    /api/recurring-tasks/:id/taken-dates
+POST   /api/recurring-tasks
+PUT    /api/recurring-tasks/:id
+DELETE /api/recurring-tasks/:id
+PUT    /api/recurring-tasks/:id/scope
+PUT    /api/recurring-tasks/:id/schedule
+POST   /api/recurring-tasks/:id/create-task
+```
+
+## Messages (mail inbox)
+
+`POST /api/messages` is the **gate-exempt** ingestion endpoint — used by the
+automator to drop mail/RSS/Telegram items into the inbox. The target user
+must have `has_mail = 1`; for a machine user, this resolves to the bound
+target user's flag.
+
+```bash
+curl -sf -X POST -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"sender":"GitHub","title":"PR #123 ready",
+       "description":"...","type":"text",
+       "scope":"work","importance":"normal","urgency":"default"}' \
+  http://127.0.0.1:3027/api/messages
+```
+
+Required: `sender`, `title`. Optional: `description`, `type`
+(`text|markdown|html`), `scope` (`private|work`), `importance`, `urgency`.
+
+Other message endpoints (gated as usual):
+
+```
+GET    /api/messages?sort=...&q=...&importance=...&context=...&urgency=...
+DELETE /api/messages/archived         # purge all archived
+PUT    /api/messages/:id/done         {"done": bool}
+PUT    /api/messages/:id/annotation   {"annotation":"..."}
+PUT    /api/messages/:id/scope|importance|urgency
+POST   /api/messages/:id/convert-to-resource
+POST   /api/messages/:id/convert-to-task
+POST   /api/messages/:id/merge        {"into-id":99}
+DELETE /api/messages/:id
+```
+
+## Resources
+
+A resource is a saved link or sheet (text snippet).
+
+```
+GET    /api/resources?sort=...&q=...&context=...&...
+GET    /api/resources/:id
+POST   /api/resources                 {"link":"https://...","title":"..."}   # link or title-only sheet
+PUT    /api/resources/:id             {"title":"...","description":"...","tags":"..."}
+DELETE /api/resources/:id
+POST   /api/resources/:id/categorize     {"category-type":"...","category-id":...}
+DELETE /api/resources/:id/categorize     ...
+POST   /api/resources/:id/reorder        {"target-resource-id":...,"position":"before|after"}
+PUT    /api/resources/:id/scope          {"scope":"..."}
+PUT    /api/resources/:id/importance     {"importance":"..."}
+```
+
+YouTube / Substack URLs auto-fetch their title.
+
+## Journals & journal entries
+
+A *journal* is a daily/themed notebook; *entries* are dated items inside it.
+
+```
+# Journals
+GET    /api/journals
+GET    /api/journals/:id
+POST   /api/journals               {"title":"..."}
+PUT    /api/journals/:id           {"title":"...","description":"...","tags":"..."}
+DELETE /api/journals/:id
+PUT    /api/journals/:id/scope     {"scope":"..."}
+POST   /api/journals/:id/create-entry          # add a new entry under this journal
+
+# Entries
+GET    /api/journal-entries
+GET    /api/journal-entries/today
+GET    /api/journal-entries/:id
+POST   /api/journal-entries        {"journal-id":7,"title":"...","description":"..."}
+PUT    /api/journal-entries/:id    {"title":"...","description":"...","tags":"..."}
+DELETE /api/journal-entries/:id
+PUT    /api/journal-entries/:id/scope|importance
+POST   /api/journal-entries/:id/reorder
+POST   /api/journal-entries/:id/categorize
+DELETE /api/journal-entries/:id/categorize
+```
+
+## Categories: people / places / projects / goals
+
+Same shape across all four types. Substitute `<cat>` with `people`,
+`places`, `projects`, or `goals`.
+
+```
+GET    /api/<cat>
+POST   /api/<cat>                   {"name":"...","description":"...","tags":"..."}
+PUT    /api/<cat>/:id               {"name":"...","description":"...","tags":"..."}
+POST   /api/<cat>/:id/reorder       {"target-id":...,"position":"before|after"}
+DELETE /api/<cat>/:id               # generic across all types
+```
+
+## Relations
+
+Generic many-to-many between entities.
+
+```
+POST   /api/relations            {"from-type":"task","from-id":1,"to-type":"meet","to-id":2}
+DELETE /api/relations            {"from-type":"...","from-id":...,"to-type":"...","to-id":...}
+GET    /api/relations/:type/:id  # all relations involving (type, id)
+```
+
+`type`s: `task`, `meet`, `resource`, `journal-entry`, `message`.
+
+## Today-board (machine-friendly aggregate)
 
 ```bash
 curl -sf http://127.0.0.1:3027/api/today-board | jq
 # → { "tasks": [...], "meets": [...], "journal-entries": [...] }
 ```
 
-### Today's tasks only
+Tasks use the same `:today` filter as the UI's Today list (incomplete +
+due-date OR urgent/superurgent OR `today=1` OR `lined_up_for` set OR active
+reminder). Meets are those with `start_date = today` and not archived.
+Journal entries are today's entries.
 
-Same logic the UI uses for the Today list — incomplete tasks that have a due
-date, are `urgent`/`superurgent`, are explicitly flagged `today`, have
-`lined_up_for` set, or have an active reminder.
+## User preferences (regular user only)
+
+```
+PUT  /api/user/language    {"language":"en|de|pt"}
+PUT  /api/user/vim-keys    {"vim_keys": 0|1}
+```
+
+Admin cannot use these. Machine users would have to be acting on behalf of
+their target — but in practice the UI handles this.
+
+## Admin: user management
+
+Requires admin auth.
+
+```
+GET    /api/users                  # list non-admin users
+POST   /api/users                  {"username":"...","password":"...",
+                                   "is_machine_user": true,
+                                   "for_user_id": 4}     # for machines only
+DELETE /api/users/:id              # cascades, also removes bound machine user
+```
+
+## Common request patterns
+
+### Answering "what's on my today board?"
+
+`GET /api/today-board` for the full aggregate, or `GET
+/api/tasks?sort=today` for tasks only. Group by `urgency`, `due_date`,
+`today == 1`, `lined_up_for`, or `reminder == "active"` as needed.
+
+### Adding mail to the inbox from a job
+
+`POST /api/messages` — bypasses the gate, requires `has_mail` on the (target)
+user.
+
+### Creating a task that should appear on Today
 
 ```bash
-curl -sf "http://127.0.0.1:3027/api/tasks?sort=today" | jq
+curl -sf -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"title":"Deploy","scope":"work"}' http://127.0.0.1:3027/api/tasks
+# → { "id": 99, ... }
+curl -sf -X PUT -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"today":true}' http://127.0.0.1:3027/api/tasks/99/today
 ```
 
-### All tasks (with sort modes)
-
-```bash
-# most recently modified (default)
-curl -sf "http://127.0.0.1:3027/api/tasks?sort=recent"
-
-# by due date
-curl -sf "http://127.0.0.1:3027/api/tasks?sort=due-date"
-
-# done tasks
-curl -sf "http://127.0.0.1:3027/api/tasks?sort=done"
-
-# full-text search on title/tags
-curl -sf "http://127.0.0.1:3027/api/tasks?q=deploy"
-```
-
-Sort modes: `recent` (default), `today`, `due-date`, `done`, `manual`,
-`reminder`.
-
-### Single task
-
-```bash
-curl -sf http://127.0.0.1:3027/api/tasks/42
-```
-
-## Writing — gated by recording mode (machine users only)
-
-When the caller is a machine user, every mutating request (`POST`/`PUT`/
-`DELETE`) is intercepted before reaching the handler:
-
-- The intent is logged to `tracker/logs/tracker.log` regardless of outcome.
-- If recording mode is **ON**, the handler runs and the change persists.
-- If recording mode is **OFF**, the handler is skipped and the response is
-  `{"dropped":true}` (HTTP 200). Nothing hits the database.
-
-Regular UI users are **not** gated — their writes always go through.
-
-To enable recording: inside the running Tracker app press **Alt+Shift+W** (or
-`POST /api/recording-mode/toggle`). A red ⚠ REC badge appears in the top
-bar while active. Toggle off with the same shortcut. **The toggle must only
-be flipped by a human, not from an agent** — there is no policy reason for a
-machine to enable its own gate.
-
-### Create a task
-
-```bash
-curl -sf -X POST -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"title":"Ship the demo","scope":"work"}' \
-  http://127.0.0.1:3027/api/tasks
-```
-
-`scope` is optional, one of `private` | `both` (default) | `work`.
-
-### Mark done / un-done
-
-```bash
-curl -sf -X PUT -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"done":true}' \
-  http://127.0.0.1:3027/api/tasks/42/done
-```
-
-### Put a task on / off the Today board
-
-```bash
-curl -sf -X PUT -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"today":true}' \
-  http://127.0.0.1:3027/api/tasks/42/today
-```
-
-## Task response shape
-
-```json
-{
-  "id": 42,
-  "title": "Ship the demo",
-  "description": "...",
-  "tags": "",
-  "done": 0,
-  "today": 1,
-  "urgency": "urgent",
-  "importance": "normal",
-  "scope": "work",
-  "due_date": "2026-04-22",
-  "due_time": "14:00",
-  "lined_up_for": null,
-  "reminder": null,
-  "reminder_date": null,
-  "created_at": "...",
-  "modified_at": "...",
-  "done_at": null,
-  "sort_order": -3.0,
-  "recurring_task_id": null,
-  "people": [],
-  "places": [],
-  "projects": [],
-  "goals": []
-}
-```
-
-`done` and `today` are integers (`0`/`1`), not booleans.
-
-## Answering "what's on my today board?"
-
-1. `GET /api/today-board` for the full aggregate (tasks + meets + journal
-   entries), or `GET /api/tasks?sort=today` for tasks only.
-2. Summarise `title` per entry, optionally grouping by `urgency`, presence
-   of `due_date`, or `today == 1` vs `lined_up_for` vs `reminder == "active"`.
+(Both writes hit the gate — recording mode must be ON for a machine user
+to land them.)
