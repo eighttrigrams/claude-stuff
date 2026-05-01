@@ -93,3 +93,34 @@ and to the book of course. But it has an additional relationship which is not a 
 contains relationship. It is the one of the exerpt and the *main* page it is associated to.
 Here we want to see a *bidirectional relationship* between both. And one where `show-badge` is
 set `false` on both ends (to mark that it is a relationship in the simple is-related-to sense).
+
+## Tips for searching
+
+Books are trees, but in Rhizome they are queried via context intersection — not
+by global title search and not by dumping `/items/<book>/related`.
+
+- Chapters, named sections, and prefaces are `hide-in-global-search: true`. A
+  global `/contexts?q=Preface` will not find them. Resolve them by intersecting
+  the book with the kind context instead.
+- A flat `/items/<book>/related` is indiscriminate: it returns chapters, pages,
+  sections, and excerpts mixed together. Avoid it for navigation.
+- Note: Preface, Introduction, Afterword etc. are modelled as **Chapters** (kind
+  = Chapter), not as a separate kind.
+
+Canonical workflow for "give me X of book Y":
+
+1. `GET /rest/contexts?q=<book>` → book id.
+2. **List chapters of the book**: intersect book ∩ Chapter kind context, sorted
+   by `sort-idx`:
+   `GET /rest/items/<book-id>/related?secondary_ids=<chapter-kind-id>&search_mode=2`
+   Pick the chapter / preface / introduction id from there.
+3. **List sections of a chapter**: intersect chapter ∩ Section kind context the
+   same way.
+4. **List pages of a chapter or section**: intersect that node ∩ Page kind
+   context (`search_mode=2` for sort-idx order).
+5. **List excerpts of a page/section/chapter**: intersect that node ∩ the
+   excerpt/quote kind context.
+
+The kind-context ids (Chapter, Section, Page, Quote, …) are stable per Rhizome
+instance — read them off any existing chapter/page item's `contexts` map once
+and reuse.
