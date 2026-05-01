@@ -1,7 +1,6 @@
 ---
 name: navigate-rhizome-user-interface
 description: Use to navigate Rhizome's UI during development
-license: none
 ---
 
 # Navigate Rhizome User Interface

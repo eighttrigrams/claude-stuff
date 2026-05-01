@@ -37,7 +37,7 @@
       "name": "rhizome",
       "source": "./plugins/rhizome",
       "description": "Skills for working with Rhizome — UI navigation and local REST API",
-      "version": "1.0.3"
+      "version": "1.0.4"
     },
     {
       "name": "tracker",

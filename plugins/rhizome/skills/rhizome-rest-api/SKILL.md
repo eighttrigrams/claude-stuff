@@ -1,22 +1,26 @@
 ---
 name: rhizome-rest-api
 description: Rhizome's local REST API — search, read, and create contexts/items via curl
-triggers:
-  - rhizome api
-  - search rhizome
-  - rhizome context
-  - rhizome item
-  - rhizome related
-  - add to rhizome
 ---
 
 # Rhizome REST API
 
 Rhizome exposes a local REST API at `http://127.0.0.1:<port>/rest/`. Dev port is
-`3006`. Request/response bodies are JSON. Use `curl` directly — there is no
-wrapper script needed.
+`3006`. Request/response bodies are JSON.
 
 Rhizome must be running locally (`./dev.sh` in `rhizome/`) for any of this to work.
+
+Script: ${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh
+
+Thin wrapper around `curl` against `127.0.0.1`. The port is required. Pass the
+path after `/rest`, **including the leading `/`** (the script does not duplicate
+the API surface; you must know the endpoints).
+
+Usage
+```
+rhizome-cli.sh <port> <path>                        # GET
+rhizome-cli.sh <port> <method> <path> [json-body]   # any method, optional JSON body
+```
 
 ## Endpoint catalogue — ask the server
 
@@ -26,7 +30,7 @@ authoritative reference** — this skill focuses on *how* to use the API, not on
 duplicating the catalogue.
 
 ```bash
-curl -sf http://127.0.0.1:3006/rest/describe | jq
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 /describe | jq
 ```
 
 ## Model
@@ -42,10 +46,10 @@ to them — ideally using *intersection* search across multiple contexts.
 
 ```bash
 # 1) search contexts
-curl -sf "http://127.0.0.1:3006/rest/contexts?q=Books"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/contexts?q=Books"
 
 # 2) search items within a context (selected = narrowest context)
-curl -sf "http://127.0.0.1:3006/rest/items/10935/related"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/10935/related"
 ```
 
 ### Intersection search (preferred strategy)
@@ -55,7 +59,7 @@ Put the **narrowest** context as the selected id, **broader** contexts as
 
 ```bash
 # Quotes (broader) that also belong to "Second World War" (narrower)
-curl -sf "http://127.0.0.1:3006/rest/items/10935/related?secondary_ids=11041"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/10935/related?secondary_ids=11041"
 ```
 
 ### Search modes
@@ -68,7 +72,7 @@ curl -sf "http://127.0.0.1:3006/rest/items/10935/related?secondary_ids=11041"
 - `5` — most recently added first
 
 ```bash
-curl -sf "http://127.0.0.1:3006/rest/items/10935/related?secondary_ids=11041&search_mode=2"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/10935/related?secondary_ids=11041&search_mode=2"
 ```
 
 ### Get an item with its description and neighbourhood
@@ -76,7 +80,7 @@ curl -sf "http://127.0.0.1:3006/rest/items/10935/related?secondary_ids=11041&sea
 Only for *non-context* items (leaf notes with longer titles).
 
 ```bash
-curl -sf "http://127.0.0.1:3006/rest/items/34696/with-related"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/34696/with-related"
 ```
 
 ### Free-text item search (use sparingly)
@@ -85,7 +89,7 @@ Prefer the context/intersection approach above. Fall back to `q` on `/rest/items
 only when you can't narrow by context.
 
 ```bash
-curl -sf "http://127.0.0.1:3006/rest/items?q=Wittgenstein"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items?q=Wittgenstein"
 ```
 
 ### Finding people
@@ -94,7 +98,7 @@ People are items under a dedicated "People" context. Once you have that
 context's id, use `/related`:
 
 ```bash
-curl -sf "http://127.0.0.1:3006/rest/items/<people-ctx-id>/related?q=Daniel"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/<people-ctx-id>/related?q=Daniel"
 ```
 
 ### Semantic / vector search
@@ -104,7 +108,7 @@ similarity. The query `q` is embedded by local Ollama (`nomic-embed-text`,
 768-dim) and matched against `items.embedding` via pgvector.
 
 ```bash
-curl -sf "http://127.0.0.1:3006/rest/items/9659/related?vector=true&q=history%20of%20oil"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/9659/related?vector=true&q=history%20of%20oil"
 ```
 
 Important: **only items with a non-empty description get embedded** — both
@@ -121,7 +125,7 @@ completion and returns `{"embedded": N}` (or `{"embedded": 0, "dry-run":
 true}` when recording is off).
 
 ```bash
-curl -sf -X POST "http://127.0.0.1:3006/rest/backfill/embeddings"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 POST "/backfill/embeddings"
 ```
 
 Run this after bulk-ingest scripts (the rhizome-ingest scripts already call
