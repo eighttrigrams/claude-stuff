@@ -47,11 +47,9 @@
     },
     {
       "name": "integrations",
+      "source": "./plugins/integrations",
       "description": "Skills for working with 3rd party integrations",
-      "version": "1.0.0",
-      "author": {
-        "name": "eighttrigrams"
-      }
+      "version": "1.0.0"
     }
   ]
 }
