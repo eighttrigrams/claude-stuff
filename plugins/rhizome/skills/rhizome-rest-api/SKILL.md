@@ -3,6 +3,8 @@ name: rhizome-rest-api
 description: Rhizome's local REST API — search, read, and create contexts/items via curl
 ---
 
+Note that when the user mentions books that you also load rhizome-books.
+
 # Rhizome REST API
 
 Rhizome exposes a local REST API at `http://127.0.0.1:<port>/rest/`. Dev port is
