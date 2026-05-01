@@ -78,3 +78,18 @@ How many levels we want to capture is up to the human. For example,
 books come often in "parts". If the human wants to capture that,
 we insert that level between the book itself and its chapters, with the consequence
 that every subordinate item, like a page, also would be associated to a part.
+
+Exerpts are interesting passages from the book. The sort of thing a human
+tends to underline or highlight in some manner. A passage is a paragraph, or 
+a few sentences. A passage can can go over a page boundary. As such, when we
+assign a sort-idx, we assign the number of the page where the "centre of gravity"
+of that passage lies, not necessarily the exact page where it starts. It might 
+only contain a few words on the last page and then the brunt of it is on the 
+page we are at and we want to see the passage associated with.
+
+An excerpt or a passage shares many of the relationship with pages, as the hierarchical
+superordinate items go. An exerpt might belong to a named passage, to a chapter, to a part
+and to the book of course. But it has an additional relationship which is not a belong to and
+contains relationship. It is the one of the exerpt and the *main* page it is associated to.
+Here we want to see a *bidirectional relationship* between both. And one where `show-badge` is
+set `false` on both ends (to mark that it is a relationship in the simple is-related-to sense).
