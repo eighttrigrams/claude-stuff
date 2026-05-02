@@ -1,1 +1,7 @@
 /token
+node_modules/
+.cpcache/
+screenshot.png
+package-lock.json
+.playwright-mcp/
+localhost-*.png

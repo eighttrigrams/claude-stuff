@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--headless",
+        "--isolated",
+        "--no-sandbox",
+        "--executable-path=/usr/bin/chromium",
+        "--viewport-size=1280x720",
+        "--output-dir=.playwright-mcp",
+        "--allowed-origins=http://localhost:8080"
+      ]
+    }
+  }
+}

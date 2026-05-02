@@ -9,7 +9,8 @@
     "/workspace": {
       "allowedTools": ["*"],
       "hasTrustDialogAccepted": true,
-      "hasAllToolsApproved": true
+      "hasAllToolsApproved": true,
+      "enabledMcpjsonServers": ["playwright"]
     }
   }
 }

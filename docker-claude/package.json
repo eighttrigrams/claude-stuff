@@ -1,0 +1,11 @@
+{
+  "name": "poc-playwright",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "screenshot": "node screenshot.js"
+  },
+  "dependencies": {
+    "playwright-core": "^1.48.0"
+  }
+}
