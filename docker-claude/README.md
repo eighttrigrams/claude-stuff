@@ -26,7 +26,7 @@ docker compose build
 export CLAUDE_CODE_OAUTH_TOKEN=$(cat token)
 docker compose run --rm -T claude -lc '
   cd /workspace && npm install --silent
-  claude --dangerously-skip-permissions -p "
+  claude -p "
     Edit src/poc/server.clj: change the H1 text to \"Hello from Headless Claude\".
     Update screenshot.js assertion to match.
     Start: clj -M -m poc.server &
@@ -69,6 +69,12 @@ So the container **must run as a non-root user**. The Dockerfile
 creates a `claude` user. To make bind-mounted files writable from
 inside, the user's UID/GID match the host (501/20 on macOS by default,
 overridable via `USER_UID` / `USER_GID` build args).
+
+The Dockerfile also installs a thin wrapper at `/usr/local/bin/claude`
+that always passes `--dangerously-skip-permissions` to the real binary
+(`claude-bin`), so you never have to type the flag — every invocation
+inside the container, interactive or headless, runs in skip-permissions
+mode by default.
 
 ### 2. macOS host UID 501 / GID 20 collides with Alpine defaults
 
@@ -151,6 +157,7 @@ immediately, and host edits are visible to Claude without rebuilds.
 | `run.sh` | Loads token from `./token`, runs `docker compose run --rm claude`. |
 | `claude-config.json` | Pre-accepts onboarding/trust so non-interactive `claude` doesn't prompt. |
 | `token` | (gitignored) bare OAuth token from `claude setup-token`. |
+| `gh_token` | (gitignored, optional) GitHub PAT — exported as `GH_TOKEN` so `gh` and `git` work inside the container. |
 | `deps.edn`, `src/poc/server.clj` | Demo Clojure HTTP server (zero deps). |
 | `package.json`, `screenshot.js` | Demo Playwright script (uses system Chromium). |
 | `.mcp.json` | Pre-wired Playwright MCP server (system Chromium, no-sandbox). |
@@ -163,6 +170,11 @@ immediately, and host edits are visible to Claude without rebuilds.
 claude setup-token       # on host; copy ONLY the sk-ant-oat01-… line
 echo 'sk-ant-oat01-…' > docker-claude/token
 chmod 600 docker-claude/token
+
+# Optional: GitHub PAT for `gh` and `git` inside the container
+echo 'ghp_…' > docker-claude/gh_token
+chmod 600 docker-claude/gh_token
+
 docker compose -f docker-claude/docker-compose.yml build
 ```
 
@@ -182,7 +194,7 @@ cd docker-claude
 export CLAUDE_CODE_OAUTH_TOKEN=$(cat token)
 docker compose run --rm -T claude -lc '
   cd /workspace
-  claude --dangerously-skip-permissions -p "Edit src/poc/server.clj … then run node screenshot.js"
+  claude -p "Edit src/poc/server.clj … then run node screenshot.js"
 '
 ```
 
@@ -206,7 +218,7 @@ resulting `screenshot.png` shows the new heading. Repeat with:
 ```bash
 docker compose run --rm -T claude -lc '
   cd /workspace
-  claude --dangerously-skip-permissions -p "
+  claude -p "
     1. Change the H1 in src/poc/server.clj from X to Y, update screenshot.js assertion to match.
     2. Start: clj -M -m poc.server &
     3. Wait for http://localhost:8080/.

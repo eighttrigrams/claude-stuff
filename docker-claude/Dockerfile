@@ -25,7 +25,10 @@ RUN apk add --no-cache \
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
 
-RUN npm install -g @anthropic-ai/claude-code
+RUN npm install -g @anthropic-ai/claude-code \
+ && mv /usr/local/bin/claude /usr/local/bin/claude-bin \
+ && printf '#!/bin/sh\nexec /usr/local/bin/claude-bin --dangerously-skip-permissions "$@"\n' > /usr/local/bin/claude \
+ && chmod +x /usr/local/bin/claude
 
 # Create non-root user matching host UID/GID so bind-mounted files are writable.
 # GID 20 ("dialout") already exists on Alpine — reuse it instead of creating.

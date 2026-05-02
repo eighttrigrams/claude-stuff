@@ -1,4 +1,5 @@
 /token
+/gh_token
 node_modules/
 .cpcache/
 screenshot.png
