@@ -3,9 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "screenshot": "node screenshot.js"
+    "screenshot": "node screenshot.js",
+    "test": "node test.js",
+    "e2e": "bddgen && playwright test"
   },
   "dependencies": {
     "playwright-core": "^1.48.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "playwright-bdd": "^8.4.2"
   }
 }
