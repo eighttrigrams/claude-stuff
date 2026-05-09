@@ -23,6 +23,23 @@ The same `/api/*` endpoints the UI uses are also the machine-callable
 endpoints — what changes is *who* is calling and *whether the recording-mode
 gate applies*.
 
+## Endpoint catalogue — ask the server
+
+`GET /api/describe` returns a self-description of every public handler
+(`{:name :ns :arglists :doc}`); each `:doc` opens with `VERB /api/path — ...`
+and lists body fields, query params, and notable error cases. **That endpoint
+is the authoritative reference** — this skill focuses on *how* to use the API
+(auth, gating, request patterns, response shapes), not on duplicating the
+catalogue.
+
+```bash
+curl -sf http://127.0.0.1:3027/api/describe | jq '.[] | {ns, name}'
+
+# Filter to one resource:
+curl -sf http://127.0.0.1:3027/api/describe \
+  | jq '.[] | select(.doc | startswith("POST /api/tasks"))'
+```
+
 ## Caller identity: regular users vs machine users
 
 Tracker has two kinds of authenticated callers:
@@ -94,29 +111,6 @@ always go through:
   in the way of automation.
 
 Everything else gated for machine users (tasks, meets, journals, etc.).
-
-## Endpoint overview
-
-```
-POST   /api/auth/login                      → {token, user}
-GET    /api/auth/required                   → {required: bool}
-GET    /api/auth/available-users            → list (dev mode only)
-
-GET    /api/today-board                     → {tasks, meets, journal-entries}
-GET    /api/translations                    → i18n strings
-GET    /api/export                          → user data export (zip)
-GET    /api/reports                         → reporting handler
-POST   /api/recording-mode/toggle           → {recording: bool}
-
-# Tasks (see /tasks below)
-# Meets / meeting series / recurring tasks
-# Messages (mail inbox)
-# Resources
-# Journals / journal entries
-# Categories: people / places / projects / goals
-# Relations
-# Users (admin only)
-```
 
 ## Tasks
 

@@ -50,6 +50,18 @@
       "source": "./plugins/integrations",
       "description": "Skills for working with 3rd party integrations",
       "version": "1.0.0"
+    },
+    {
+      "name": "clojure",
+      "source": "./plugins/clojure",
+      "description": "General Clojure skills and conventions",
+      "version": "1.0.0"
+    },
+    {
+      "name": "plurama",
+      "source": "./plugins/plurama",
+      "description": "Conventions for apps composed under the plurama umbrella JVM (e.g. migrations namespacing)",
+      "version": "1.0.0"
     }
   ]
 }
