@@ -1,0 +1,8 @@
+{
+  "name": "security",
+  "description": "Security skills — sandboxing, isolation, and least-privilege patterns",
+  "version": "1.0.0",
+  "author": {
+    "name": "eighttrigrams"
+  }
+}

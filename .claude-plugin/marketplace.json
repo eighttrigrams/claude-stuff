@@ -62,6 +62,12 @@
       "source": "./plugins/plurama",
       "description": "Conventions for apps composed under the plurama umbrella JVM (e.g. migrations namespacing)",
       "version": "1.0.0"
+    },
+    {
+      "name": "security",
+      "source": "./plugins/security",
+      "description": "Security skills — sandboxing, isolation, and least-privilege patterns",
+      "version": "1.0.0"
     }
   ]
 }
