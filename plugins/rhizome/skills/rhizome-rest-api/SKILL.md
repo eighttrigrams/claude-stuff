@@ -32,7 +32,7 @@ authoritative reference** — this skill focuses on *how* to use the API, not on
 duplicating the catalogue.
 
 ```bash
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 /describe | jq
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 /describe | jq
 ```
 
 ## Model
@@ -62,10 +62,10 @@ intersect topic ∩ kind. See the recipe below.
 
 ```bash
 # 1) search contexts
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/contexts?q=Books"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 "/contexts?q=Books"
 
 # 2) search items within a context (selected = narrowest context)
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/10935/related"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 "/items/10935/related"
 ```
 
 ### Intersection search (preferred strategy)
@@ -91,7 +91,7 @@ ${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/10935/related?secondary_
 
 ```bash
 # "pages of the Preface" → Preface (topic) ∩ Page (kind)
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/49041/related?secondary_ids=48601&search_mode=2"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 "/items/49041/related?secondary_ids=48601&search_mode=2"
 ```
 
 **Prefer the minimal intersection that captures the user's intent.** Adding
@@ -110,7 +110,7 @@ secondary id if the user's query actually constrains on it.
 - `5` — most recently added first
 
 ```bash
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/10935/related?secondary_ids=11041&search_mode=2"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 "/items/10935/related?secondary_ids=11041&search_mode=2"
 ```
 
 ### Get an item with its description and neighbourhood
@@ -118,7 +118,7 @@ ${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/10935/related?secondary_
 Only for *non-context* items (leaf notes with longer titles).
 
 ```bash
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/34696/with-related"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 "/items/34696/with-related"
 ```
 
 ### Free-text item search (use sparingly)
@@ -127,7 +127,7 @@ Prefer the context/intersection approach above. Fall back to `q` on `/rest/items
 only when you can't narrow by context.
 
 ```bash
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items?q=Wittgenstein"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 "/items?q=Wittgenstein"
 ```
 
 ### Finding people
@@ -136,7 +136,7 @@ People are items under a dedicated "People" context. Once you have that
 context's id, use `/related`:
 
 ```bash
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/<people-ctx-id>/related?q=Daniel"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 "/items/<people-ctx-id>/related?q=Daniel"
 ```
 
 ### Semantic / vector search
@@ -146,7 +146,7 @@ similarity. The query `q` is embedded by local Ollama (`nomic-embed-text`,
 768-dim) and matched against `items.embedding` via pgvector.
 
 ```bash
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 "/items/9659/related?vector=true&q=history%20of%20oil"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 "/items/9659/related?vector=true&q=history%20of%20oil"
 ```
 
 Important: **only items with a non-empty description get embedded** — both
@@ -163,7 +163,7 @@ completion and returns `{"embedded": N}` (or `{"embedded": 0, "dry-run":
 true}` when recording is off).
 
 ```bash
-${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3006 POST "/backfill/embeddings"
+${CLAUDE_SKILL_DIR}/scripts/rhizome-cli.sh 3140 POST "/backfill/embeddings"
 ```
 
 Run this after bulk-ingest scripts (the rhizome-ingest scripts already call
