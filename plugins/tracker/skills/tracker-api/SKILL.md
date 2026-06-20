@@ -35,6 +35,43 @@ specific resource endpoint (`/api/tasks`, `/api/meets`, `/api/resources`,
 unsure of the exact path, consult `/api/describe` (below) — never refuse on
 the assumption that tracker does not track something.
 
+## Answering completely: act, filter, and size the read
+
+- **Act on reads.** For a read-only question, fetch the data and answer —
+  do **not** ask permission first ("shall I list them?"). Only ask back when
+  the request is genuinely ambiguous.
+- **Find the filter before saying "no".** List endpoints take query params
+  (look them up in `/api/describe`): `resources` filter by
+  `domain`/`excluded-domains`, tasks by scope/importance/urgency/category,
+  meets by date/category. "My Google Docs" or "links from X" is a `domain`
+  filter on `/api/resources` — a domain is **not** a category and **not** a
+  missing feature.
+- **Put query params in the path, not a body.** For GET reads, encode every
+  query parameter directly in the path query string —
+  `GET /api/tasks?category=Acme&due-date=2026-06-22&limit=100`. Parameters
+  placed in a separate body/`query`/`params` field are dropped on a GET, so
+  the filter and limit silently have no effect and you fall back to the
+  default capped list (the `?limit=10` cap above). `body` is only for the
+  JSON payload of POST/PUT writes.
+- **Size the read to the question — limits are not one-size-fits-all.**
+  Machine-user list reads on `/api/tasks`, `/api/meets`, `/api/resources`,
+  `/api/journals`, `/api/journal-entries`, `/api/recurring-tasks`,
+  `/api/meeting-series` default to `?limit=10`, so a bare list silently
+  truncates. Reason about the natural size of the answer:
+  - **Bounded queries** — the today board, a single day, "this week",
+    "meetings at X in the next 3 days" — are small finite sets. Prefer a
+    bounded aggregate when one exists (`/api/today-board` is **not** capped
+    and returns the whole day), or pass a `?limit` comfortably above the real
+    count, and answer in full.
+  - **Explicit counts** — "top 5", "next 3 meetings" — pass that as `?limit`.
+  - **Open-ended sets** — "all my tasks", "every resource", a multi-month
+    report — do not trust the default 10 and do not silently truncate: pass a
+    deliberate `?limit` (or paginate) and tell the user the scope/limit you
+    applied instead of implying you listed everything.
+- **Aggregate across types** when the question spans them ("everything on
+  Monday" = tasks **and** meets), and say which sources you checked. Never
+  call a single (possibly filtered or capped) list "all" without checking.
+
 ## Endpoint catalogue — ask the server
 
 `GET /api/describe` returns a self-description of every public handler

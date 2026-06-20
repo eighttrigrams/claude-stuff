@@ -155,9 +155,33 @@ and where to fix them — **prefer fixing the skill over the code**:
 - **Fuzzy time reasoning** ("next 5 hours", "overdue"): the agent needs to
   know *now*. `ai.clj` injects the current date/time into the system prompt at
   chat time (`now-context`); without it the model mislabels tasks due later
-  today as overdue.
+  today as overdue. It also can't reliably do calendar arithmetic ("which
+  date is Monday?") — so `now-context` additionally emits the **next ~8 days
+  as a weekday→date table**, and the skill tells it to resolve weekday names
+  against that table rather than computing dates itself.
+- **Undercounting "all X"**: two distinct causes, both reproduced with a
+  machine-user login (regular users are uncapped, so this is invisible
+  otherwise):
+  1. **The `?limit=10` machine-user cap** on list reads — fix via the skill's
+     contextual-limit rule (bounded vs. explicit-count vs. open-ended; prefer
+     uncapped aggregates like `/api/today-board` for "today"; pass a high
+     `?limit` for full enumeration; aggregate across `/api/tasks` *and*
+     `/api/meets`).
+  2. **Query params placed in a `body`/`params` field on a GET** — the
+     `app_request` tool only sends `:path` (+ `:body` for POST/PUT), so GET
+     params there are silently dropped and the limit/filter vanish, snapping
+     back to the capped default. The skill rule: **encode all GET query
+     params in the path string** (`/api/tasks?category=…&due-date=…&limit=100`).
+- **Hedging on reads**: it would ask "shall I list them?" instead of just
+  answering — the skill now says act on read-only questions.
 
-After any skill edit, **restart plurama** so the new guidance is loaded.
+Diminishing-returns residue (LLM judgment, not structural): exact counts can
+drift when combining filters, and meets aren't server-filtered by category so
+a day query lists the day's other meetings (it caveats this).
+
+After any skill edit, **restart plurama** so the new guidance is loaded. To
+reproduce the cap-driven failures, point the agent's `tracker` credential at a
+**machine user** and seed >10 items.
 
 ## Verifying writes
 
