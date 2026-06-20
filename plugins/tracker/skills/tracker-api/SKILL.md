@@ -51,26 +51,31 @@ the assumption that tracker does not track something.
   `GET /api/tasks?category=Acme&due-date=2026-06-22&limit=100`. Parameters
   placed in a separate body/`query`/`params` field are dropped on a GET, so
   the filter and limit silently have no effect and you fall back to the
-  default capped list (the `?limit=10` cap above). `body` is only for the
-  JSON payload of POST/PUT writes.
-- **Size the read to the question — limits are not one-size-fits-all.**
-  Machine-user list reads on `/api/tasks`, `/api/meets`, `/api/resources`,
+  default capped list (the machine-user list cap below). `body` is only for
+  the JSON payload of POST/PUT writes.
+- **Lean rows by default — so enumerate and count freely.** For machine-user
+  (bot) callers, list reads on `/api/tasks`, `/api/meets`, `/api/resources`,
   `/api/journals`, `/api/journal-entries`, `/api/recurring-tasks`,
-  `/api/meeting-series` default to `?limit=10`, so a bare list silently
-  truncates. Reason about the natural size of the answer:
-  - **Bounded queries** — the today board, a single day, "this week",
-    "meetings at X in the next 3 days" — are small finite sets. Prefer a
-    bounded aggregate when one exists (`/api/today-board` is **not** capped
-    and returns the whole day), or pass a `?limit` comfortably above the real
-    count, and answer in full.
-  - **Explicit counts** — "top 5", "next 3 meetings" — pass that as `?limit`.
-  - **Open-ended sets** — "all my tasks", "every resource", a multi-month
-    report — do not trust the default 10 and do not silently truncate: pass a
-    deliberate `?limit` (or paginate) and tell the user the scope/limit you
-    applied instead of implying you listed everything.
+  `/api/meeting-series` return **lean rows**: `description` and `tags` are
+  stripped, and the default cap is **100** (not 10). Lean rows are cheap, so
+  for "all / how many / which" questions just filter and read the full
+  set — listing titles and counting need no special care. Only for genuinely
+  huge sets ("every task I have ever created") pass an explicit `?limit` /
+  paginate and state the scope you covered. Explicit counts ("top 5", "next 3")
+  → pass that as `?limit`.
+- **Ask for detail only when needed.** To get the actual `description` / body
+  text of list items, add `?detail=full` (e.g.
+  `/api/tasks?category=Acme&detail=full`) — use it when the user wants the
+  contents, not for counting or listing titles. For one item's full detail,
+  prefer `GET /api/<type>/:id`.
+- **Today and the next few days.** `/api/today-board` is the bounded,
+  full-detail view (never stripped). It is today-only by default; pass
+  `?days=N` to widen the meeting window to today..today+N for "the next few
+  days" / the Today page. Reach for it on "what's on today / coming up"
+  instead of scanning all tasks.
 - **Aggregate across types** when the question spans them ("everything on
   Monday" = tasks **and** meets), and say which sources you checked. Never
-  call a single (possibly filtered or capped) list "all" without checking.
+  call a single filtered list "all" without confirming it covers the question.
 
 ## Endpoint catalogue — ask the server
 
