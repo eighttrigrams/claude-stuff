@@ -15,6 +15,26 @@ The same `/api/*` endpoints the UI uses are also the machine-callable
 endpoints — what changes is *who* is calling and *whether the recording-mode
 gate applies*.
 
+## What tracker covers (scope)
+
+Tracker is not only tasks. A single user's tracker holds **tasks, meetings
+("meets") and meeting series, recurring tasks, journals and journal entries,
+saved resources (links and videos), mottos**, and **"sources"** — the user's
+**YouTube channel subscriptions, podcast feeds, and Atom/RSS feeds** plus
+their per-source settings. People / places / projects / goals are the
+categories that tie items together through relations.
+
+So questions about the user's **YouTube subscriptions, saved YouTube videos,
+podcasts, or RSS feeds are in scope** and are answered from tracker — do
+**not** treat them as an external account you cannot reach. Subscriptions
+are under `/api/sources/youtube/channels`; saved videos/links are
+`resources` (`/api/resources`); podcast and feed sources under
+`/api/sources/podcast` and `/api/sources/atom`. For broad reads, prefer the
+specific resource endpoint (`/api/tasks`, `/api/meets`, `/api/resources`,
+`/api/sources/...`) over `/api/today-board`, which only covers *today*. When
+unsure of the exact path, consult `/api/describe` (below) — never refuse on
+the assumption that tracker does not track something.
+
 ## Endpoint catalogue — ask the server
 
 `GET /api/describe` returns a self-description of every public handler
