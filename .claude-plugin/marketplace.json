@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Clojure and architecture skills for Claude Code",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "pluginRoot": "./plugins"
   },
   "plugins": [
@@ -26,12 +26,6 @@
       "source": "./plugins/log-tool-calls",
       "description": "A PreToolUse hook that logs every tool invocation to logs/hooks.log",
       "version": "1.1.0"
-    },
-    {
-      "name": "integrations",
-      "source": "./plugins/integrations",
-      "description": "Skills for working with 3rd party integrations",
-      "version": "1.0.0"
     },
     {
       "name": "security",
